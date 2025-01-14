@@ -1,8 +1,7 @@
 import { motion } from "framer-motion";
 
 const AnimatedBook = () => {
-  // Format message with proper spacing
-  const message = `To my amazing friend who lights up every room with her smile,\n\nThank you for being the incredible person you are. Your friendship means the world to me, and I'm so grateful for all the moments we've shared together.\n\nYou're not just a friend; you're family.\n\nHere's to many more years of laughter, adventures, and creating beautiful memories together! 💖`;
+  const message = `To my amazing friend who lights up every room with her smile,\n\nThank you for being the incredible person you are. Your friendship means the world to me, and I'm so grateful for all the moments we've shared together.\n\nYou're not just a friend; you're family.\n\nHere's to many more years of laughter, adventures, and creating beautiful memories together!`;
 
   const draw = {
     hidden: { pathLength: 0, opacity: 0 },
@@ -18,21 +17,23 @@ const AnimatedBook = () => {
 
   return (
     <motion.div
-      className="relative w-full max-w-4xl mx-auto my-12"
+      className="relative w-full max-w-4xl mx-auto my-4 md:my-12 px-2 md:px-0"
       initial={{ opacity: 0 }}
       whileInView={{ opacity: 1 }}
       viewport={{ once: false, amount: 0.3 }}
     >
-      {/* Book SVG */}
       <motion.div
         initial={{ rotateX: -90 }}
         whileInView={{ rotateX: 0 }}
         viewport={{ once: false, amount: 0.3 }}
         transition={{ duration: 1.5, type: "spring" }}
-        className="relative w-full aspect-[4/3] perspective-1000"
+        className="relative w-full h-[600px] md:h-auto md:aspect-[4/3] perspective-1000"
       >
-        <svg viewBox="0 0 800 600" className="w-full h-full">
-          {/* Book pages with shadow effect */}
+        <svg
+          viewBox="0 0 800 800"
+          className="w-full h-full"
+          preserveAspectRatio="xMidYMid meet"
+        >
           <defs>
             <filter id="paper-shadow">
               <feDropShadow dx="2" dy="2" stdDeviation="3" floodOpacity="0.3" />
@@ -53,9 +54,9 @@ const AnimatedBook = () => {
             </pattern>
           </defs>
 
-          {/* Book binding */}
+          {/* Book binding - Adjusted for taller mobile view */}
           <motion.path
-            d="M100 100 C150 95, 650 95, 700 100 C700 400, 700 400, 700 500 C650 505, 150 505, 100 500 C100 400, 100 400, 100 100"
+            d="M100 150 C150 145, 650 145, 700 150 C700 500, 700 500, 700 650 C650 655, 150 655, 100 650 C100 500, 100 500, 100 150"
             fill="#8b5cf6"
             initial={{ opacity: 0 }}
             whileInView={{ opacity: 1 }}
@@ -63,9 +64,9 @@ const AnimatedBook = () => {
             transition={{ duration: 1 }}
           />
 
-          {/* Book pages */}
+          {/* Book pages - Adjusted for taller mobile view */}
           <motion.path
-            d="M120 120 C160 115, 640 115, 680 120 C680 380, 680 380, 680 480 C640 485, 160 485, 120 480 C120 380, 120 380, 120 120"
+            d="M120 170 C160 165, 640 165, 680 170 C680 480, 680 480, 680 630 C640 635, 160 635, 120 630 C120 480, 120 480, 120 170"
             fill="url(#paper-texture)"
             filter="url(#paper-shadow)"
             initial={{ opacity: 0, scale: 0.9 }}
@@ -74,7 +75,7 @@ const AnimatedBook = () => {
             transition={{ duration: 1, delay: 0.5 }}
           />
 
-          {/* Animated pen */}
+          {/* Animated pen - Adjusted position */}
           <motion.g
             initial={{ opacity: 0, x: -50, y: -50 }}
             whileInView={{ opacity: 1, x: 0, y: 0 }}
@@ -82,7 +83,7 @@ const AnimatedBook = () => {
             transition={{ duration: 1, delay: 0.8 }}
           >
             <motion.path
-              d="M680 120 L700 100 L690 90 L670 110 Z"
+              d="M680 170 L700 150 L690 140 L670 160 Z"
               fill="#4a5568"
               initial="hidden"
               whileInView="visible"
@@ -92,47 +93,58 @@ const AnimatedBook = () => {
           </motion.g>
         </svg>
 
-        {/* Animated text container */}
+        {/* Text Container with increased size for mobile */}
         <motion.div
-          className="absolute inset-0 flex items-center justify-center"
+          className="absolute inset-0"
           initial={{ opacity: 0 }}
           whileInView={{ opacity: 1 }}
           viewport={{ once: false }}
           transition={{ delay: 1 }}
         >
-          <div className="w-[80%] h-[70%] flex items-center justify-center overflow-hidden">
-            <motion.div
-              className="text-purple-800 leading-relaxed text-lg font-handwriting relative whitespace-pre-line"
-              style={{ maxWidth: "90%" }}
+          <svg
+            viewBox="0 0 800 800"
+            className="w-full h-full absolute inset-0"
+            preserveAspectRatio="xMidYMid meet"
+          >
+            <foreignObject
+              width="520"
+              height="420"
+              x="140"
+              y="190"
+              className="overflow-hidden"
             >
-              {message.split("").map((char, index) => (
-                <motion.span
-                  key={index}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: false }}
-                  transition={{
-                    duration: 0.1,
-                    delay: 1.2 + index * 0.03,
-                    type: "spring",
-                    stiffness: 100,
-                  }}
-                  className="inline-block"
-                  style={{
-                    whiteSpace: char === "\n" ? "pre-line" : "pre",
-                  }}
-                >
-                  {char}
-                </motion.span>
-              ))}
-            </motion.div>
-          </div>
+              <div className="w-full h-full flex items-center justify-center">
+                <motion.div className="text-purple-800 leading-relaxed text-2xl md:text-xl font-handwriting p-8 md:p-8">
+                  {message.split("").map((char, index) => (
+                    <motion.span
+                      key={index}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: false }}
+                      transition={{
+                        duration: 0.1,
+                        delay: 1.2 + index * 0.03,
+                        type: "spring",
+                        stiffness: 100,
+                      }}
+                      className="inline-block"
+                      style={{
+                        whiteSpace: char === "\n" ? "pre-line" : "pre",
+                      }}
+                    >
+                      {char}
+                    </motion.span>
+                  ))}
+                </motion.div>
+              </div>
+            </foreignObject>
+          </svg>
         </motion.div>
       </motion.div>
 
       {/* Decorative elements */}
       <motion.div
-        className="absolute -top-4 -right-4 w-12 h-12 text-4xl"
+        className="absolute -top-4 -right-4 w-8 md:w-12 h-8 md:h-12 text-2xl md:text-4xl"
         initial={{ rotate: -180, opacity: 0 }}
         whileInView={{ rotate: 0, opacity: 1 }}
         viewport={{ once: false }}
@@ -141,7 +153,7 @@ const AnimatedBook = () => {
         ✨
       </motion.div>
       <motion.div
-        className="absolute -bottom-4 -left-4 w-12 h-12 text-4xl"
+        className="absolute -bottom-4 -left-4 w-8 md:w-12 h-8 md:h-12 text-2xl md:text-4xl"
         initial={{ rotate: 180, opacity: 0 }}
         whileInView={{ rotate: 0, opacity: 1 }}
         viewport={{ once: false }}

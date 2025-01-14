@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ref, push, serverTimestamp } from "firebase/database";
+import { db } from "../firebase/config";
 import AnimatedBook from "./AnimatedBook";
 import Birthday1 from "../assets/Birthday1.png";
 import Birthday2 from "../assets/Birthday2.png";
@@ -23,6 +25,7 @@ const BirthdayWishes = () => {
   const [answer, setAnswer] = useState("");
   const [, setSelectedLocation] = useState("");
   const [isAnswered, setIsAnswered] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [, setScrollPosition] = useState(0);
 
   useEffect(() => {
@@ -91,6 +94,48 @@ const BirthdayWishes = () => {
     { x: -1000, y: -1000 },
     { x: 1000, y: -1000 },
   ];
+
+  const saveResponse = async (responseType: string, response: string) => {
+    try {
+      setIsSubmitting(true);
+      const responsesRef = ref(db, "birthday-responses");
+
+      const responseData = {
+        questionType: responseType,
+        response: response,
+        timestamp: serverTimestamp(),
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+        deviceInfo: {
+          userAgent: navigator.userAgent,
+          screenSize: `${window.innerWidth}x${window.innerHeight}`,
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        },
+      };
+
+      await push(responsesRef, responseData);
+    } catch (error) {
+      console.error("Error saving response:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  // Handle meeting question response
+  const handleMeetingResponse = async (response: string) => {
+    setAnswer(response);
+    setShowLocationQuestion(true);
+    setShowMeetingQuestion(false);
+    await saveResponse("meeting", response);
+  };
+
+  // Handle location question response
+  const handleLocationResponse = async (location: string) => {
+    setSelectedLocation(location);
+    setIsAnswered(true);
+    setShowLocationQuestion(false);
+    await saveResponse("location", location);
+  };
 
   return (
     <div className="min-h-screen w-screen bg-gradient-to-br from-pink-100 via-purple-100 to-indigo-100 overflow-x-hidden">
@@ -233,7 +278,6 @@ const BirthdayWishes = () => {
         </div>
       </motion.div>
 
-      {/* Rest of the code continues... */}
       {/* Animated Book Section */}
       <AnimatedBook />
 
@@ -330,6 +374,7 @@ const BirthdayWishes = () => {
       </motion.div>
 
       {/* Enhanced Modal System */}
+      {/* Meeting and Location Question Modals */}
       <AnimatePresence>
         {/* Meeting Question Modal */}
         {showMeetingQuestion && !isAnswered && (
@@ -368,43 +413,39 @@ const BirthdayWishes = () => {
                 animate="visible"
               >
                 <motion.button
-                  onClick={() => {
-                    setAnswer("Yes");
-                    setShowLocationQuestion(true);
-                    setShowMeetingQuestion(false);
-                  }}
+                  onClick={() => handleMeetingResponse("Yes")}
+                  disabled={isSubmitting}
                   className="px-8 py-3 bg-green-500 text-white rounded-lg hover:bg-green-600 
-                           transition-all transform hover:scale-105 hover:shadow-lg"
+                     transition-all transform hover:scale-105 hover:shadow-lg
+                     disabled:opacity-50 disabled:cursor-not-allowed"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Yes
+                  {isSubmitting ? "Saving..." : "Yes"}
                 </motion.button>
                 <motion.button
-                  onClick={() => {
-                    setAnswer("No");
-                    setShowLocationQuestion(true);
-                    setShowMeetingQuestion(false);
-                  }}
+                  onClick={() => handleMeetingResponse("No")}
+                  disabled={isSubmitting}
                   className="px-8 py-3 bg-red-500 text-white rounded-lg hover:bg-red-600 
-                           transition-all transform hover:scale-105 hover:shadow-lg"
+                     transition-all transform hover:scale-105 hover:shadow-lg
+                     disabled:opacity-50 disabled:cursor-not-allowed"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  No
+                  {isSubmitting ? "Saving..." : "No"}
                 </motion.button>
                 <motion.button
-                  onClick={() => {
-                    setAnswer("Bakchodi");
-                    setShowLocationQuestion(true);
-                    setShowMeetingQuestion(false);
-                  }}
+                  onClick={() => handleMeetingResponse("Bakchodi")}
+                  disabled={isSubmitting}
                   className="px-8 py-3 bg-purple-500 text-white rounded-lg hover:bg-purple-600 
-                           transition-all transform hover:scale-105 hover:shadow-lg"
+                     transition-all transform hover:scale-105 hover:shadow-lg
+                     disabled:opacity-50 disabled:cursor-not-allowed"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
                 >
-                  Bakchodi Mat Kar phir se start hogya tera
+                  {isSubmitting
+                    ? "Saving..."
+                    : "Bakchodi Mat Kar phir se start hogya tera"}
                 </motion.button>
               </motion.div>
             </motion.div>
@@ -485,13 +526,11 @@ const BirthdayWishes = () => {
                 ].map((location, index) => (
                   <motion.button
                     key={location}
-                    onClick={() => {
-                      setSelectedLocation(location);
-                      setIsAnswered(true);
-                      setShowLocationQuestion(false);
-                    }}
+                    onClick={() => handleLocationResponse(location)}
+                    disabled={isSubmitting}
                     className="px-8 py-3 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-lg 
-                             hover:from-purple-600 hover:to-pink-600 transition-all transform hover:scale-105 shadow-md"
+                       hover:from-purple-600 hover:to-pink-600 transition-all transform hover:scale-105 shadow-md
+                       disabled:opacity-50 disabled:cursor-not-allowed"
                     variants={{
                       hidden: { opacity: 0, x: -50 },
                       visible: {
@@ -503,7 +542,7 @@ const BirthdayWishes = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    {location}
+                    {isSubmitting ? "Saving..." : location}
                   </motion.button>
                 ))}
               </motion.div>

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
+import { ref, push, serverTimestamp } from "firebase/database";
+import { db } from "../firebase/config";
 
 interface BirthdayLandingProps {
   onAccessGrant: () => void;
@@ -15,6 +17,7 @@ const messages = [
 const BirthdayLanding: React.FC<BirthdayLandingProps> = ({ onAccessGrant }) => {
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [showButtons, setShowButtons] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -28,9 +31,43 @@ const BirthdayLanding: React.FC<BirthdayLandingProps> = ({ onAccessGrant }) => {
     }
   }, [currentMessageIndex]);
 
-  const handleAccess = () => {
-    onAccessGrant();
-    navigate("/wishes");
+  const saveResponse = async (response: string) => {
+    try {
+      setIsSubmitting(true);
+      const responsesRef = ref(db, "birthday-responses");
+
+      // Create response object with more details
+      const responseData = {
+        buttonClicked: response, // Which button was clicked
+        responseText: response === "Yes" ? "Yes!" : "Kyu Bakchodi krta re tu!", // Full button text
+        timestamp: serverTimestamp(),
+        date: new Date().toLocaleDateString(),
+        time: new Date().toLocaleTimeString(),
+        deviceInfo: {
+          userAgent: navigator.userAgent,
+          screenSize: `${window.innerWidth}x${window.innerHeight}`,
+          timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        },
+      };
+
+      await push(responsesRef, responseData);
+
+      onAccessGrant();
+      navigate("/wishes");
+    } catch (error) {
+      console.error("Error saving response:", error);
+      alert(
+        "Something went wrong! But let's continue with your surprise anyway!"
+      );
+      onAccessGrant();
+      navigate("/wishes");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleAccess = async (response: string) => {
+    await saveResponse(response);
   };
 
   return (
@@ -86,16 +123,24 @@ const BirthdayLanding: React.FC<BirthdayLandingProps> = ({ onAccessGrant }) => {
                 className="flex justify-center gap-4 mt-6"
               >
                 <button
-                  onClick={handleAccess}
-                  className="px-6 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 transform hover:scale-105 transition-all"
+                  onClick={() => handleAccess("Yes")}
+                  disabled={isSubmitting}
+                  className={`px-6 py-2 bg-purple-600 text-white rounded-full hover:bg-purple-700 
+                    transform hover:scale-105 transition-all ${
+                      isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
                 >
-                  Yes!
+                  {isSubmitting ? "Loading..." : "Yes!"}
                 </button>
                 <button
-                  onClick={handleAccess}
-                  className="px-6 py-2 bg-pink-500 text-white rounded-full hover:bg-pink-600 transform hover:scale-105 transition-all"
+                  onClick={() => handleAccess("Bakchodi")}
+                  disabled={isSubmitting}
+                  className={`px-6 py-2 bg-pink-500 text-white rounded-full hover:bg-pink-600 
+                    transform hover:scale-105 transition-all ${
+                      isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+                    }`}
                 >
-                  Of Course!
+                  {isSubmitting ? "Loading..." : "Kyu Bakchodi krta re tu!"}
                 </button>
               </motion.div>
             )}

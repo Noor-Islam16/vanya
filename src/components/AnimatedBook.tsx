@@ -1,7 +1,10 @@
 import { motion } from "framer-motion";
 
 const AnimatedBook = () => {
-  const message = `To my amazing friend who lights up every room with her smile,\n\nThank you for being the incredible person you are. Your friendship means the world to me, and I'm so grateful for all the moments we've shared together.\n\nYou're not just a friend; you're family.\n\nHere's to many more years of laughter, adventures, and creating beautiful memories together!`;
+  const message = `Happy Birthday!  Humko pata hai re tmhra life ke abhi tough  phase se guzar rahi hoo, aur shayad sab kuch thoda overwhelming lag raha ho. Lekin tum jitni strong ho, tmse behtar koi nahi handle kar sakta.\n\n Tmhra naam hi teri identity ko define karta hai – Muskan. Tmhra hasi sabse khoobsurat cheez hai. \n\nAaj ke din tum bas apni life ka stress bhool kar apna din enjoy karo. 
+
+Happy Birthday once again, Muskan!  
+ `;
 
   const draw = {
     hidden: { pathLength: 0, opacity: 0 },

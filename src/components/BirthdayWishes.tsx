@@ -152,7 +152,7 @@ const BirthdayWishes = () => {
           animate={{ scale: 1, opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.8 }}
         >
-          Happy Birthday, My Dearest Friend! 🎉
+          Happy Birthday, Mishra! 🎉
         </motion.h1>
         <motion.p
           className="text-lg text-purple-600"
@@ -364,10 +364,11 @@ const BirthdayWishes = () => {
                 ease: "easeInOut",
               }}
             >
-              "Don't worry about anything as long as I'm here. No tension about
-              how things will work out - I'll take care of everything for you.
-              Just stay stress-free, I'll handle all the stuff. Just trust me on
-              this one, yaar! 🤗"
+              "Don't stress about anything as long as I'm around! Seriously, no
+              need to take stress how things will work out — I've got your back.
+              You just focus on staying chill, and I'll handle the rest. Trust
+              me on this one! 🤗"
+              <br /> Aur ye list bhi pura ho jyega bilkul!
             </motion.p>
           </motion.div>
         </motion.div>
@@ -518,8 +519,10 @@ const BirthdayWishes = () => {
               >
                 {[
                   "Mani Casadona 🏰",
+                  "Starbucks 🧋",
                   "MBA Chai Wala ☕",
                   "Burger King 👑",
+                  "Flurys 🍰",
                   "Dominos 🍕",
                   "City Center 🌆",
                   "Aaya to dekh lene tu bol de rhe hum 😉",

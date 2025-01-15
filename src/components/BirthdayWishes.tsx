@@ -313,7 +313,10 @@ const BirthdayWishes = () => {
           >
             {[
               { text: "Namrata Voice AI Assistant", icon: "🎙️" },
-              { text: "Samsung S24 Ultra", icon: "📱" },
+              {
+                text: "Samsung S24 Ultra - Kal nhi to Iss week end tk hath mai hoga tmhre but Iss mei issko lene mai tmhra ek role hai kal milege to btayege hum",
+                icon: "📱",
+              },
               { text: "Spider Man Costume and Mask", icon: "🦸‍♂️" },
               { text: "Your Cute Miniature", icon: "🎎" },
               { text: "And much more...", icon: "✨" },
